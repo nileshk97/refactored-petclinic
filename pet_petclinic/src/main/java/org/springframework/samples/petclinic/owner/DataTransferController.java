@@ -35,4 +35,17 @@ public class DataTransferController {
 		return visits;
 	}
 
+	@GetMapping("deletebyownerid/{ownerId}")
+	public String deleteByOwnerId(@PathVariable Integer ownerId) {
+		this.pets.deleteByOwnerId(ownerId);
+		return "redirect:http://localhost:8080/owners/{ownerId}";
+	}
+
+	@GetMapping("deletebyid/{petId}")
+	public String deleteById(@PathVariable Integer petId) {
+		Integer ownerId = this.pets.findById(petId).getOwnerId();
+		this.pets.deleteById(petId);
+		return "redirect:http://localhost:8080/owners/" + ownerId;
+	}
+
 }

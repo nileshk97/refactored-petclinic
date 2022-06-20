@@ -132,4 +132,12 @@ class VisitController {
 		}
 	}
 
+	@GetMapping("deletebyvisitid/{visit}")
+	public String deleteById(@PathVariable("visit") Integer visitId) {
+
+		this.visits.deleteById(visitId);
+
+		return "redirect:http://localhost:8080/owners/find";
+	}
+
 }

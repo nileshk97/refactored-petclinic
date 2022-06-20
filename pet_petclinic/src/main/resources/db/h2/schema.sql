@@ -31,5 +31,5 @@ CREATE TABLE visits (
   visit_date  DATE,
   description VARCHAR(255)
 );
-ALTER TABLE visits ADD CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id);
+ALTER TABLE visits ADD CONSTRAINT fk_visits_pets FOREIGN KEY (pet_id) REFERENCES pets (id) ON DELETE CASCADE;
 CREATE INDEX visits_pet_id ON visits (pet_id);

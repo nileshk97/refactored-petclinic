@@ -32,6 +32,8 @@
       Owner</a>
     <a th:href="@{http://localhost:8081/owners/{id}/pets/new(id=${owner.id})}" class="btn btn-default">Add
       New Pet</a>
+    <a th:href="@{deleteownerbyid/{id}/(id=${owner.id})}" class="btn btn-default">Delete
+      Owner</a>
   
     <br />
     <br />
@@ -50,6 +52,7 @@
               th:text="${#temporals.format(pet.birthDate, 'yyyy-MM-dd')}"></dd>
             <dt>Type</dt>
             <dd th:text="${pet.type}"></dd>
+            <dt><a th:href="@{http://localhost:8081/deletebyid/{petId}(petId=${pet.id})}">Delete Pet</a></dt>
           </dl>
         </td>
         <td valign="top">

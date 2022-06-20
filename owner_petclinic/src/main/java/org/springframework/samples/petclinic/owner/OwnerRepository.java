@@ -61,4 +61,7 @@ public interface OwnerRepository extends Repository<Owner, Integer> {
 	 */
 	void save(Owner owner);
 
+	@Transactional
+	void deleteById(Integer ownerId);
+
 }
