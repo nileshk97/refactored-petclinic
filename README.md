@@ -1,6 +1,6 @@
 # refactored-petclinic
 
-This is a refactored version of spring-petclinic which can be found [here].(https://github.com/spring-projects/spring-petclinic)
+This is a refactored version of spring-petclinic which can be found [here](https://github.com/spring-projects/spring-petclinic).
 
 I have split it into `Owner` and `Pet` microservice. 
 
