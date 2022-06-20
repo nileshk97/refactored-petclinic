@@ -66,10 +66,10 @@
             </tr>
             <tr>
               <td><a
-                th:href="@{{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
+                th:href="@{http://localhost:8081/owners/{ownerId}/pets/{petId}/edit(ownerId=${owner.id},petId=${pet.id})}">Edit
                   Pet</a></td>
               <td><a
-                th:href="@{{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
+                th:href="@{http://localhost:8081/owners/{ownerId}/pets/{petId}/visits/new(ownerId=${owner.id},petId=${pet.id})}">Add
                   Visit</a></td>
             </tr>
           </table>

@@ -142,7 +142,8 @@ class OwnerController {
 	public ModelAndView showOwner(@PathVariable("ownerId") int ownerId) throws IOException {
 		ModelAndView mav = new ModelAndView("owners/ownerDetails");
 		Owner owner = this.owners.findById(ownerId);
-		// Start HTTP requeset code
+
+		// Start HTTP request code
 		String GET_URL = "http://localhost:8081/owner/" + ownerId + "/pets";
 		URL obj = new URL(GET_URL);
 		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
@@ -160,22 +161,45 @@ class OwnerController {
 			in.close();
 
 			// print result
-			System.out.println("Response over HTTP: " + response.toString());
+			System.out.println("Response[Pets] over HTTP: " + response.toString());
 			PetPOJO[] pets = new Gson().fromJson(response.toString(), PetPOJO[].class);
 			owner.getPetsInternal().clear();
 			owner.getPetsInternal().addAll(Arrays.asList(pets));
-			System.out.println(Arrays.asList(pets));
 		}
 		else {
-			System.out.println("GET request not worked");
+			System.out.println("Request to GET pets of the owner did not work");
 		}
 		// End HTTP request code
-		for (PetPOJO pet : owner.getPets()) {
-			System.out.println("In showOwner");
-			// TODO: Create an endpoint in Pet service to get list of visits of
-			// a particular pet
 
-			// pet.setVisitsInternal(visits.findByPetId(pet.getId()));
+		for (PetPOJO pet : owner.getPets()) {
+			// Start HTTP request code
+			GET_URL = "http://localhost:8081/pet/" + pet.getId() + "/visits";
+			obj = new URL(GET_URL);
+			con = (HttpURLConnection) obj.openConnection();
+			con.setRequestMethod("GET");
+			responseCode = con.getResponseCode();
+			System.out.println("GET Response Code :: " + responseCode);
+			if (responseCode == HttpURLConnection.HTTP_OK) { // success
+				BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+				String inputLine;
+				StringBuffer response = new StringBuffer();
+
+				while ((inputLine = in.readLine()) != null) {
+					response.append(inputLine);
+				}
+				in.close();
+
+				// print result
+				System.out.println("Response[Visits] over HTTP: " + response.toString());
+				VisitPOJO[] visits = new Gson().fromJson(response.toString(), VisitPOJO[].class);
+				pet.getVisitsInternal().clear();
+				pet.setVisitsInternal(Arrays.asList(visits));
+			}
+			else {
+				System.out.println("Request to GET visits of the pet did not work");
+			}
+			// End HTTP request code
+
 		}
 		mav.addObject(owner);
 		return mav;

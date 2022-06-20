@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.owner;
 
+import org.springframework.samples.petclinic.visit.Visit;
+import org.springframework.samples.petclinic.visit.VisitRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,18 +14,25 @@ public class DataTransferController {
 
 	private final PetRepository pets;
 
-	public DataTransferController(PetRepository pets) {
+	private final VisitRepository visitRepository;
+
+	public DataTransferController(PetRepository pets, VisitRepository visits) {
 		this.pets = pets;
+		this.visitRepository = visits;
 	}
 
 	@GetMapping("/owner/{ownerId}/pets")
 	@ResponseBody
 	public List<Pet> getPetsByOwnerId(@PathVariable Integer ownerId) {
 		List<Pet> pets = this.pets.findByOwnerId(ownerId);
-		for (Pet pet : pets) {
-			System.out.println(pet);
-		}
 		return pets;
+	}
+
+	@GetMapping("pet/{petId}/visits")
+	@ResponseBody
+	public List<Visit> getVisitsByPetId(@PathVariable Integer petId) {
+		List<Visit> visits = this.visitRepository.findByPetId(petId);
+		return visits;
 	}
 
 }

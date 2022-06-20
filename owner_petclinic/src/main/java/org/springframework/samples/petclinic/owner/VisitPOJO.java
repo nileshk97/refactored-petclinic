@@ -1,12 +1,13 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class VisitPOJO {
 
 	private Integer id;
 
-	private LocalDate date;
+	private String date;
 
 	private String description;
 
@@ -25,10 +26,12 @@ public class VisitPOJO {
 	}
 
 	public LocalDate getDate() {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate date = LocalDate.parse(this.date, formatter);
 		return date;
 	}
 
-	public void setDate(LocalDate date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 

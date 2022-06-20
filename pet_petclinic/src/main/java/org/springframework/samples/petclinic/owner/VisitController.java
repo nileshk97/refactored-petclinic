@@ -15,10 +15,16 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.google.gson.Gson;
 import org.springframework.samples.petclinic.visit.Visit;
 import org.springframework.samples.petclinic.visit.VisitRepository;
 import org.springframework.stereotype.Controller;
@@ -71,9 +77,46 @@ class VisitController {
 		return visit;
 	}
 
+	@ModelAttribute("owner")
+	public OwnerPOJO findOwner(@PathVariable("ownerId") int ownerId) throws IOException {
+		OwnerPOJO ownerPOJO = null;
+		String GET_URL = "http://localhost:8080/owner/" + ownerId;
+		URL obj = new URL(GET_URL);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+		con.setRequestMethod("GET");
+		int responseCode = con.getResponseCode();
+		System.out.println("GET Response Code :: " + responseCode);
+		if (responseCode == HttpURLConnection.HTTP_OK) { // success
+			BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+			String inputLine;
+			StringBuffer response = new StringBuffer();
+
+			while ((inputLine = in.readLine()) != null) {
+				response.append(inputLine);
+			}
+			in.close();
+
+			// print result
+			System.out.println("Response over HTTP");
+			ownerPOJO = new Gson().fromJson(response.toString(), OwnerPOJO.class);
+			System.out.println(ownerPOJO);
+		}
+		else {
+			System.out.println("GET request not worked");
+		}
+		if (ownerPOJO == null) {
+			ownerPOJO = new OwnerPOJO();
+			ownerPOJO.setFirstName("No Matching");
+			ownerPOJO.setLastName("Name found");
+
+		}
+		return ownerPOJO;
+	}
+
 	// Spring MVC calls method loadPetWithVisit(...) before initNewVisitForm is called
-	@GetMapping("/owners/*/pets/{petId}/visits/new")
+	@GetMapping("/owners/{ownerId}/pets/{petId}/visits/new")
 	public String initNewVisitForm(@PathVariable("petId") int petId, Map<String, Object> model) {
+
 		return "pets/createOrUpdateVisitForm";
 	}
 
@@ -85,7 +128,7 @@ class VisitController {
 		}
 		else {
 			this.visits.save(visit);
-			return "redirect:/owners/{ownerId}";
+			return "redirect:http://localhost:8080/owners/{ownerId}";
 		}
 	}
 

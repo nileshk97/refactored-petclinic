@@ -31,6 +31,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -130,15 +131,48 @@ class PetController {
 
 	@PostMapping("/pets/{petId}/edit")
 	public String processUpdateForm(@Valid Pet pet, BindingResult result, ModelMap model, @PathVariable String petId,
-			@PathVariable String ownerId) {
+			@PathVariable String ownerId) throws IOException {
 		if (result.hasErrors()) {
 			pet.setOwnerId(Integer.parseInt(ownerId));
 			model.put("pet", pet);
 			return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 		}
 		else {
-			this.pets.save(pet);
-			return "redirect:/owners/{ownerId}";
+			Pet petFromDB = this.pets.findById(pet.getId());
+			if (petFromDB.getOwnerId() != pet.getOwnerId()) // if owner_id is updated
+			{
+				// Start HTTP request code
+				String GET_URL = "http://localhost:8081/doesownerexist/" + ownerId + "/";
+				URL obj = new URL(GET_URL);
+				HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+				con.setRequestMethod("GET");
+				int responseCode = con.getResponseCode();
+				System.out.println("GET Response Code :: " + responseCode);
+				if (responseCode == HttpURLConnection.HTTP_OK) { // success
+					BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+					String inputLine;
+					StringBuffer response = new StringBuffer();
+
+					while ((inputLine = in.readLine()) != null) {
+						response.append(inputLine);
+					}
+					in.close();
+
+					// print result
+					System.out.println("Response[true/false] over HTTP: " + response.toString());
+					Boolean exists = new Gson().fromJson(response.toString(), Boolean.class);
+					if (exists) {
+						this.pets.save(pet);
+					}
+				}
+				else {
+					System.out.println("Request to GET pets of the owner did not work");
+				}
+				// End HTTP request code
+			} // if owner_id is updated [END]
+			else
+				this.pets.save(pet);
+			return "redirect:http://localhost:8080/owners/{ownerId}";
 		}
 	}
 

@@ -14,12 +14,22 @@ public class DataTransferController {
 		this.owners = clinicService;
 	}
 
-	// TODO: Add a GET endpoint that returns owner with given Id
 	@GetMapping("owner/{ownerId}")
 	@ResponseBody
 	public Owner getOwnerById(@PathVariable String ownerId) {
 		Owner owner = this.owners.findById(Integer.parseInt(ownerId));
 		return owner;
+	}
+
+	// TODO: Add a GET endpoint that returns whether an owner with given id exists or not
+	@GetMapping("doesownerexist/{ownerId}")
+	@ResponseBody
+	public boolean doesOwnerExist(@PathVariable String ownerId) {
+		Owner owner = owners.findById(Integer.parseInt(ownerId));
+		if (owner == null)
+			return false;
+		else
+			return true;
 	}
 
 }
